@@ -9,6 +9,7 @@ interface Story {
   story: string;
   prompt: string;
   createdAt: Date;
+  imageUrl?: string;
 }
 
 interface StoryLibraryProps {
@@ -62,6 +63,18 @@ export const StoryLibrary = ({ stories, onViewStory, onDeleteStory }: StoryLibra
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {stories.map((story) => (
           <Card key={story.id} className="overflow-hidden border-0 shadow-card hover:shadow-magical transition-shadow duration-300">
+            {/* Story Image */}
+            {story.imageUrl && (
+              <div className="relative h-48 overflow-hidden">
+                <img
+                  src={story.imageUrl}
+                  alt="Story illustration"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-d from-black/40 via-transparent to-transparent" />
+              </div>
+            )}
+            
             <div className="gradient-card p-6 space-y-4">
               <div className="space-y-3">
                 <Badge variant="secondary" className="text-xs">

@@ -4,9 +4,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { Mic, Wand2, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { AIService, StoryGenerationResult } from "@/lib/ai-service";
 
 interface StoryPromptInputProps {
-  onStoryGenerated: (story: string, prompt: string) => void;
+  onStoryGenerated: (story: string, prompt: string, imageUrl?: string) => void;
 }
 
 export const StoryPromptInput = ({ onStoryGenerated }: StoryPromptInputProps) => {
@@ -26,19 +27,39 @@ export const StoryPromptInput = ({ onStoryGenerated }: StoryPromptInputProps) =>
 
     setIsGenerating(true);
     
-    // Simulate story generation (replace with actual AI API call)
-    setTimeout(() => {
-      const mockStory = `Once upon a time, ${prompt.toLowerCase()}. The adventure began when magical creatures appeared from nowhere. They danced through the moonlit streets, spreading wonder and joy. As dawn approached, they whispered secrets of creativity to all who believed. And so, a new story was born from a simple idea.`;
+    try {
+      // Generate story and image using real AI APIs
+      const result: StoryGenerationResult = await AIService.generateStory(prompt);
       
-      onStoryGenerated(mockStory, prompt);
-      setPrompt("");
-      setIsGenerating(false);
-      
+      if (result.error) {
+        toast({
+          title: "Generation failed",
+          description: result.error,
+          variant: "destructive",
+        });
+        setIsGenerating(false);
+        return;
+      }
+
+      if (result.story) {
+        onStoryGenerated(result.story, prompt, result.imageUrl);
+        setPrompt("");
+        
+        toast({
+          title: "Story created! ✨",
+          description: "Your AI-generated story and image are ready!",
+        });
+      }
+    } catch (error) {
+      console.error('Error generating story:', error);
       toast({
-        title: "Story created! ✨",
-        description: "Your magical story is ready to view!",
+        title: "Generation failed",
+        description: "Something went wrong while creating your story. Please try again.",
+        variant: "destructive",
       });
-    }, 2000);
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const handleVoiceInput = () => {

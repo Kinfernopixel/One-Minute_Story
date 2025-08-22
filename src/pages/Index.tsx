@@ -12,33 +12,35 @@ interface Story {
   story: string;
   prompt: string;
   createdAt: Date;
+  imageUrl?: string;
 }
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState<NavigationTab>("create");
-  const [currentStory, setCurrentStory] = useState<{ story: string; prompt: string } | null>(null);
+  const [currentStory, setCurrentStory] = useState<{ story: string; prompt: string; imageUrl?: string } | null>(null);
   const [stories, setStories] = useState<Story[]>([]);
 
-  const handleStoryGenerated = (story: string, prompt: string) => {
-    setCurrentStory({ story, prompt });
+  const handleStoryGenerated = (story: string, prompt: string, imageUrl?: string) => {
+    setCurrentStory({ story, prompt, imageUrl });
   };
 
   const handleBackToCreate = () => {
     setCurrentStory(null);
   };
 
-  const handleSaveToLibrary = (story: string, prompt: string) => {
+  const handleSaveToLibrary = (story: string, prompt: string, imageUrl?: string) => {
     const newStory: Story = {
       id: Date.now().toString(),
       story,
       prompt,
       createdAt: new Date(),
+      imageUrl,
     };
     setStories(prev => [newStory, ...prev]);
   };
 
   const handleViewStory = (story: Story) => {
-    setCurrentStory({ story: story.story, prompt: story.prompt });
+    setCurrentStory({ story: story.story, prompt: story.prompt, imageUrl: story.imageUrl });
     setActiveTab("create");
   };
 
@@ -69,6 +71,7 @@ const Index = () => {
                 <StoryDisplay
                   story={currentStory.story}
                   prompt={currentStory.prompt}
+                  imageUrl={currentStory.imageUrl}
                   onBack={handleBackToCreate}
                   onSaveToLibrary={handleSaveToLibrary}
                 />

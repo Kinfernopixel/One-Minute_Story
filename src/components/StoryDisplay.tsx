@@ -8,11 +8,12 @@ import heroStoryExample from "@/assets/hero-story-example.jpg";
 interface StoryDisplayProps {
   story: string;
   prompt: string;
+  imageUrl?: string;
   onBack: () => void;
-  onSaveToLibrary: (story: string, prompt: string) => void;
+  onSaveToLibrary: (story: string, prompt: string, imageUrl?: string) => void;
 }
 
-export const StoryDisplay = ({ story, prompt, onBack, onSaveToLibrary }: StoryDisplayProps) => {
+export const StoryDisplay = ({ story, prompt, imageUrl, onBack, onSaveToLibrary }: StoryDisplayProps) => {
   const { toast } = useToast();
 
   const handleShare = async () => {
@@ -36,7 +37,7 @@ export const StoryDisplay = ({ story, prompt, onBack, onSaveToLibrary }: StoryDi
   };
 
   const handleSave = () => {
-    onSaveToLibrary(story, prompt);
+    onSaveToLibrary(story, prompt, imageUrl);
     toast({
       title: "Saved to library! 📚",
       description: "You can find this story in your personal collection.",
@@ -72,7 +73,7 @@ export const StoryDisplay = ({ story, prompt, onBack, onSaveToLibrary }: StoryDi
         {/* Story Image */}
         <div className="relative h-80 overflow-hidden">
           <img
-            src={heroStoryExample}
+            src={imageUrl || heroStoryExample}
             alt="Generated story illustration"
             className="w-full h-full object-cover"
           />
